@@ -1,0 +1,132 @@
+:root {
+  --nav-height: 70px;
+  --royal-blue: #1e3a8a;
+  --royal-gradient: linear-gradient(135deg, #1e3a8a, #4338ca);
+  --slate-200: #cbd5e1;
+  --slate-700: #334155;
+  --slate-900: #0f172a;
+}
+
+.navbar-wrapper {
+  height: var(--nav-height);
+  background: rgba(255, 255, 255, 0.98);
+  border-bottom: 1px solid var(--slate-200);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+}
+
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--slate-900);
+  text-decoration: none;
+  z-index: 2001;
+}
+
+.navbar-brand .icon {
+  margin-right: 10px;
+  color: var(--royal-blue);
+}
+
+.navbar-links {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.navbar-links a {
+  color: var(--slate-700);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.navbar-links a:hover {
+  color: var(--royal-blue);
+}
+
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.navbar-actions span {
+  font-weight: 700;
+  color: var(--slate-900);
+  font-size: 0.9rem;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: transparent;
+  color: #ef4444;
+  border: 1px solid #fee2e2;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #fef2f2;
+  border-color: #fca5a5;
+}
+
+/* Mobile Toggle Button (Hidden by default) */
+.menu-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--slate-900);
+  z-index: 2001;
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: block;
+  }
+
+  .navbar-links {
+    position: fixed;
+    top: 0;
+    right: -100%; /* Hidden off-screen */
+    width: 70%;
+    height: 100vh;
+    background: white;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 100px 40px;
+    transition: 0.3s ease-in-out;
+    box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+    gap: 30px;
+  }
+
+  /* When menu is active (Add this class via JS) */
+  .navbar-links.active {
+    right: 0;
+  }
+
+  .navbar-actions {
+    display: none; /* Hide profile/logout on mobile or move inside links */
+  }
+}

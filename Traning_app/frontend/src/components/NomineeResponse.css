@@ -1,0 +1,101 @@
+:root {
+  --royal-blue: #1e3a8a;
+  --royal-gradient: linear-gradient(135deg, #1e3a8a, #4338ca);
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #cbd5e1;
+  --slate-600: #475569;
+  --slate-900: #0f172a;
+}
+
+.response-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background-color: var(--slate-50);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(67, 56, 202, 0.05) 0px, transparent 50%);
+  font-family: 'Inter', sans-serif;
+}
+
+.response-card {
+  background: #ffffff;
+  padding: 50px 40px;
+  border-radius: 20px;
+  border: 1px solid var(--slate-200);
+  box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08);
+  max-width: 480px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.response-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 30px;
+  transition: transform 0.3s ease;
+}
+
+.response-card:hover .response-icon {
+  transform: scale(1.05);
+}
+
+.response-icon.accepted {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  box-shadow: 0 10px 15px rgba(16, 185, 129, 0.2);
+}
+
+.response-icon.rejected {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  box-shadow: 0 10px 15px rgba(239, 68, 68, 0.2);
+}
+
+.response-icon.already {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  box-shadow: 0 10px 15px rgba(245, 158, 11, 0.2);
+}
+
+.response-card h4 {
+  color: var(--slate-900);
+  font-size: 1.75rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: -0.5px;
+}
+
+.response-card p {
+  color: var(--slate-600);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+@media (max-width: 480px) {
+  .response-card {
+    padding: 40px 24px;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+  
+  .response-wrapper {
+    background-color: #ffffff;
+  }
+}

@@ -1,0 +1,163 @@
+:root {
+  --royal-blue: #1e3a8a;
+  --royal-gradient: linear-gradient(135deg, #1e3a8a, #4338ca);
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #cbd5e1;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-900: #0f172a;
+  --nav-height: 70px;
+}
+
+.content-area {
+  padding-top: calc(var(--nav-height) + 2rem);
+  padding-bottom: 3rem;
+  max-width: 1000px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.page-header h4 {
+  font-weight: 800;
+  color: var(--slate-900);
+  letter-spacing: -0.5px;
+  margin: 0;
+}
+
+/* Card Styling */
+.card-custom {
+  background: #ffffff;
+  border-radius: 16px;
+  border: 1px solid var(--slate-200);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  overflow: hidden;
+}
+
+.card-body {
+  padding: 2.5rem;
+}
+
+/* Individual Nominee Row Styling */
+.border.rounded.p-3.mb-3 {
+  border: 1px solid var(--slate-100) !important;
+  border-left: 4px solid var(--slate-200) !important;
+  transition: all 0.2s ease;
+  background: var(--slate-50) !important;
+}
+
+.border.rounded.p-3.mb-3:hover {
+  border-left-color: var(--royal-blue) !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Form Controls */
+.form-control {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  border: 1px solid var(--slate-200);
+  font-size: 0.9rem;
+  color: var(--slate-900);
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  border-color: var(--royal-blue);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.08);
+  outline: none;
+}
+
+/* Buttons */
+.btn-primary {
+  background: var(--royal-gradient);
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(30, 58, 138, 0.15);
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+}
+
+.btn-outline-primary {
+  color: var(--royal-blue);
+  border-color: var(--royal-blue);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--royal-blue);
+  color: #fff;
+}
+
+.btn-outline-secondary {
+  border-color: var(--slate-200);
+  color: var(--slate-600);
+}
+
+.btn-outline-secondary:hover {
+  background-color: var(--slate-100);
+  color: var(--slate-900);
+  border-color: var(--slate-200);
+}
+
+/* Alerts */
+.alert {
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  border: none;
+}
+
+.alert-danger {
+  background-color: #fef2f2;
+  color: #991b1b;
+}
+
+.alert-success {
+  background-color: #f0fdf4;
+  color: #166534;
+}
+
+/* Animations */
+.card-custom {
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 1.5rem;
+  }
+  
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .d-flex.gap-2 {
+    flex-direction: column;
+  }
+  
+  .btn {
+    width: 100%;
+  }
+}
