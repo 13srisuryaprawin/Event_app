@@ -4,195 +4,141 @@ from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
+# Reusable Email Styles
+STYLES = {
+    'container': "font-family: 'Segoe UI', Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;",
+    'header': "background-color: #1a73e8; color: white; padding: 25px; text-align: center;",
+    'body': "padding: 30px; line-height: 1.6; color: #3c4043;",
+    'card': "background-color: #f8f9fa; border-radius: 6px; padding: 20px; margin: 20px 0; border-left: 4px solid #1a73e8;",
+    'btn_accept': "display: inline-block; background-color: #1e8e3e; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: bold; margin-right: 10px;",
+    'btn_reject': "display: inline-block; background-color: #d93025; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: bold;",
+    'btn_feedback': "display: inline-block; background-color: #1a73e8; color: white; padding: 12px 25px; text-decoration: none; border-radius: 4px; font-weight: bold;",
+    'footer': "padding: 20px; text-align: center; font-size: 12px; color: #70757a; background-color: #f1f3f4;"
+}
 
 def send_invitation_email(nominee):
-    """Send invitation email to a nominee with Accept/Reject links."""
     event = nominee.event
     accept_url = f"{settings.BACKEND_URL}/api/nominee/{nominee.id}/accept/"
     reject_url = f"{settings.BACKEND_URL}/api/nominee/{nominee.id}/reject/"
 
-    subject = f"Invitation: {event.title}"
+    subject = f"Action Required: Your Invitation for {event.title}"
+    
     text_message = f"""
-Dear {nominee.name},
+Greetings {nominee.name},
 
-You have been nominated for the following training event:
+You have been selected to participate in an upcoming session: {event.title}.
 
-Event: {event.title}
+Details:
+- Schedule: {event.date.strftime('%B %d, %Y')} at {event.time.strftime('%I:%M %p')}
+- Location: {event.venue}
+
 Description: {event.description}
-Date: {event.date.strftime('%B %d, %Y')}
-Time: {event.time.strftime('%I:%M %p')}
-Venue: {event.venue}
 
-Please respond to this invitation by clicking one of the links below:
-
+Please confirm your attendance:
 Accept: {accept_url}
-Reject: {reject_url}
-
-Best regards,
-Training Management Team
+Decline: {reject_url}
 """
 
     html_message = f"""
-<html>
-<body>
-<p>Dear {nominee.name},</p>
+<div style="{STYLES['container']}">
+    <div style="{STYLES['header']}">
+        <h2 style="margin:0;">Training Invitation</h2>
+    </div>
+    <div style="{STYLES['body']}">
+        <p>Hello <strong>{nominee.name}</strong>,</p>
+        <p>We are pleased to invite you to the following professional development session:</p>
+        
+        <div style="{STYLES['card']}">
+            <h3 style="margin-top:0; color:#1a73e8;">{event.title}</h3>
+            <p style="margin: 5px 0;"><strong>When:</strong> {event.date.strftime('%B %d, %Y')} | {event.time.strftime('%I:%M %p')}</p>
+            <p style="margin: 5px 0;"><strong>Where:</strong> {event.venue}</p>
+            <p style="margin: 15px 0 0 0; font-style: italic; color: #5f6368;">{event.description}</p>
+        </div>
 
-<p>You have been nominated for the following training event:</p>
-
-<ul>
-<li><strong>Event:</strong> {event.title}</li>
-<li><strong>Description:</strong> {event.description}</li>
-<li><strong>Date:</strong> {event.date.strftime('%B %d, %Y')}</li>
-<li><strong>Time:</strong> {event.time.strftime('%I:%M %p')}</li>
-<li><strong>Venue:</strong> {event.venue}</li>
-</ul>
-
-<p>Please respond to this invitation by clicking one of the links below:</p>
-
-<p><a href="{accept_url}" style="background-color: #28a745; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Accept</a></p>
-<p><a href="{reject_url}" style="background-color: #dc3545; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reject</a></p>
-
-<p>Best regards,<br>Training Management Team</p>
-</body>
-</html>
+        <p>Will you be attending? Please let us know by selecting an option below:</p>
+        <div style="margin-top: 25px;">
+            <a href="{accept_url}" style="{STYLES['btn_accept']}">Confirm Attendance</a>
+            <a href="{reject_url}" style="{STYLES['btn_reject']}">Decline</a>
+        </div>
+    </div>
+    <div style="{STYLES['footer']}">
+        Sent by Training Management Portal
+    </div>
+</div>
 """
-
     try:
-        email = EmailMultiAlternatives(
-            subject=subject,
-            body=text_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[nominee.email],
-        )
+        email = EmailMultiAlternatives(subject, text_message, settings.DEFAULT_FROM_EMAIL, [nominee.email])
         email.attach_alternative(html_message, "text/html")
         email.send(fail_silently=False)
         logger.info(f"✓ Invitation email sent to {nominee.email}")
         return True
     except Exception as e:
-        logger.error(f"✗ Failed to send invitation email to {nominee.email}: {type(e).__name__}: {e}")
+        logger.error(f"✗ Failed to send invitation: {e}")
         return False
 
 
 def send_status_notification_to_admin(nominee, status):
-    """Notify admin when a nominee accepts or rejects an invitation."""
     event = nominee.event
-    subject = f"Nominee {status}: {nominee.name} — {event.title}"
-    text_message = f"""
-Hello Admin,
-
-Nominee "{nominee.name}" has {status.lower()} the invitation for the training event:
-
-Event: {event.title}
-Nominee: {nominee.name}
-Email: {nominee.email}
-Department: {nominee.department}
-Status: {status}
-
-Please check the dashboard for updated counts.
-
-Best regards,
-Training Management System
-"""
+    subject = f"Update: {nominee.name} {status}ed — {event.title}"
+    
+    text_message = f"Admin Alert: {nominee.name} has marked their status as '{status}' for {event.title}."
 
     html_message = f"""
-<html>
-<body>
-<p>Hello Admin,</p>
-
-<p>Nominee "<strong>{nominee.name}</strong>" has {status.lower()} the invitation for the training event:</p>
-
-<ul>
-<li><strong>Event:</strong> {event.title}</li>
-<li><strong>Nominee:</strong> {nominee.name}</li>
-<li><strong>Email:</strong> {nominee.email}</li>
-<li><strong>Department:</strong> {nominee.department}</li>
-<li><strong>Status:</strong> {status}</li>
-</ul>
-
-<p>Please check the dashboard for updated counts.</p>
-
-<p>Best regards,<br>Training Management System</p>
-</body>
-</html>
+<div style="{STYLES['container']}">
+    <div style="padding: 20px; border-bottom: 1px solid #eee;">
+        <h3 style="margin:0; color: #3c4043;">RSVP Update</h3>
+    </div>
+    <div style="padding: 20px;">
+        <p>A nominee has updated their participation status:</p>
+        <table style="width: 100%; border-collapse: collapse;">
+            <tr><td style="padding: 8px 0; color: #70757a;">Event:</td><td><strong>{event.title}</strong></td></tr>
+            <tr><td style="padding: 8px 0; color: #70757a;">Nominee:</td><td>{nominee.name}</td></tr>
+            <tr><td style="padding: 8px 0; color: #70757a;">Response:</td><td><span style="color: {'#1e8e3e' if status.lower() == 'accept' else '#d93025'}; font-weight: bold;">{status.upper()}</span></td></tr>
+            <tr><td style="padding: 8px 0; color: #70757a;">Department:</td><td>{nominee.department}</td></tr>
+        </table>
+    </div>
+</div>
 """
-
     try:
-        email = EmailMultiAlternatives(
-            subject=subject,
-            body=text_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[settings.ADMIN_EMAIL],
-        )
+        email = EmailMultiAlternatives(subject, text_message, settings.DEFAULT_FROM_EMAIL, [settings.ADMIN_EMAIL])
         email.attach_alternative(html_message, "text/html")
         email.send(fail_silently=False)
-        logger.info(f"✓ Admin notification sent for {nominee.name}")
         return True
     except Exception as e:
-        logger.error(f"✗ Failed to send admin notification: {type(e).__name__}: {e}")
-        return False
+        logger.error(f"✗ Admin notification failed: {e}")
         return False
 
 
 def send_feedback_email(nominee):
-    """Send feedback form link to an attended nominee."""
     event = nominee.event
     feedback_url = f"{settings.FRONTEND_URL}/feedback/{nominee.id}"
 
-    subject = f"Feedback Request: {event.title}"
-    text_message = f"""
-Dear {nominee.name},
-
-Thank you for attending the training event:
-
-Event: {event.title}
-Date: {event.date.strftime('%B %d, %Y')}
-Venue: {event.venue}
-
-We value your feedback! Please take a moment to share your experience by clicking the link below:
-
-Feedback Form: {feedback_url}
-
-Your feedback helps us improve future training programs.
-
-Best regards,
-Training Management Team
-"""
+    subject = f"Your thoughts? Feedback for {event.title}"
+    text_message = f"Thank you for attending {event.title}. Please provide your feedback here: {feedback_url}"
 
     html_message = f"""
-<html>
-<body>
-<p>Dear {nominee.name},</p>
-
-<p>Thank you for attending the training event:</p>
-
-<ul>
-<li><strong>Event:</strong> {event.title}</li>
-<li><strong>Date:</strong> {event.date.strftime('%B %d, %Y')}</li>
-<li><strong>Venue:</strong> {event.venue}</li>
-</ul>
-
-<p>We value your feedback! Please take a moment to share your experience by clicking the link below:</p>
-
-<p><a href="{feedback_url}" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Click Here to Fill Feedback</a></p>
-
-<p>Your feedback helps us improve future training programs.</p>
-
-<p>Best regards,<br>Training Management Team</p>
-</body>
-</html>
+<div style="{STYLES['container']}">
+    <div style="{STYLES['header']}; background-color: #5f6368;">
+        <h2 style="margin:0;">Workshop Feedback</h2>
+    </div>
+    <div style="{STYLES['body']}; text-align: center;">
+        <p>Hello {nominee.name},</p>
+        <p>We hope you found the <strong>{event.title}</strong> session insightful.</p>
+        <p>To help us enhance our future programs, could you please share your experience?</p>
+        
+        <div style="margin: 30px 0;">
+            <a href="{feedback_url}" style="{STYLES['btn_feedback']}">Complete Feedback Form</a>
+        </div>
+        
+        <p style="font-size: 13px; color: #70757a;">It will only take 2 minutes of your time.</p>
+    </div>
+</div>
 """
-
     try:
-        email = EmailMultiAlternatives(
-            subject=subject,
-            body=text_message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=[nominee.email],
-        )
+        email = EmailMultiAlternatives(subject, text_message, settings.DEFAULT_FROM_EMAIL, [nominee.email])
         email.attach_alternative(html_message, "text/html")
         email.send(fail_silently=False)
-        logger.info(f"✓ Feedback email sent to {nominee.email}")
         return True
     except Exception as e:
-        logger.error(f"✗ Failed to send feedback email to {nominee.email}: {type(e).__name__}: {e}")
+        logger.error(f"✗ Feedback email failed: {e}")
         return False
