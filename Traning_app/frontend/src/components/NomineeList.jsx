@@ -116,11 +116,11 @@ function NomineeList() {
           {attendedCount > 0 && (
             <div className="utility-buttons">
               <button className="btn-utility" onClick={downloadCSV} title="Download CSV Report">
-                <i className="bi bi-file-earmark-spreadsheet"></i> Report
+                <i className="bi bi-file-earmark-spreadsheet"></i> Download Report
               </button>
               <button className="btn-utility" onClick={sendFeedbackEmails} disabled={actionLoading.feedback}>
-                <i className={`bi ${actionLoading.feedback ? 'spinner-border spinner-border-sm' : 'bi-envelope-paper'}`}></i> 
-                {actionLoading.feedback ? ' Sending...' : ' Feedback'}
+                <i className={`bi ${actionLoading.feedback ? 'spinner-border spinner-border-sm' : 'bi-envelope-paper'}`}></i> Send
+                {actionLoading.feedback ? ' Sending...' : ' Feedback'} 
               </button>
             </div>
           )}
@@ -181,6 +181,7 @@ function NomineeList() {
                     </td>
                     <td className="text-right">
                       <div className="row-actions">
+                        
                         {n.status === "Accepted" && (
                           <button 
                             className="action-btn-check" 
